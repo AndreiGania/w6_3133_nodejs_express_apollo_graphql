@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import movieSchema from './schemas/schema.js';
+import { typeDefs } from './schemas/schema.js';
 import movieResolvers from './resolvers/resolvers.js';
 import mongoose from 'mongoose';
 
@@ -24,9 +24,11 @@ const connectDB = async() => {
 }
 
 async function startServer() {
+    await connectDB();
+
     //Define Apollo Server
     const server = new ApolloServer({
-      typeDefs: movieSchema,
+      typeDefs: typeDefs,
       resolvers: movieResolvers
     });
 
@@ -44,13 +46,7 @@ async function startServer() {
     //Start Express server
     app.listen(process.env.PORT, () => {
       console.log(`🚀 Server ready at http://localhost:${process.env.PORT}/graphql`);
-      //Connect to MongoDB Atlas
-      try {
-          connectDB()
-          console.log('Connected to MongoDB Atlas');
-      } catch (error) {
-        console.log(`Unable to connect to DB : ${error.message}`);
-      }
+      console.log('Connected to MongoDB Atlas');
     })
 }
 
